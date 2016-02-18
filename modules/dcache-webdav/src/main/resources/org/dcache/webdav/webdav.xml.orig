@@ -225,11 +225,9 @@
                                                       <property name="properties">
                                                           <map>
                                                               <entry key="jersey.config.server.provider.packages"
-                                                                     value="org.dcache.webapi; org.glassfish.jersey.jackson;
-                                                                     com.fasterxml.jackson.jaxrs.json"/>
-                                                             <entry key="jersey.config.server.provider.classnames"
-                                                                     value="org.dcache.webapi.MyObjectProvider;com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
-                                                                     com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider"/>
+                                                                     value="org.dcache.webapi"/>
+                                                              <entry key="jersey.config.server.provider.classnames"
+                                                                     value="org.glassfish.jersey.jackson.JacksonFeature"/>
                                                           </map>
                                                       </property>
                                                   </bean>
@@ -251,18 +249,6 @@
                                   </bean>
                               </list>
                           </property>
-                      </bean>
-                  </property>
-                  <property name="attributes">
-                      <bean class="org.dcache.util.jetty.ImmutableAttributesMap">
-                          <constructor-arg>
-                              <map>
-                                  <entry key="#{ T(org.dcache.webapi.files.DirectoryTree).DL}"
-                                         value-ref="list-handler"/>
-                                  <entry key="#{ T(org.dcache.webapi.files.DirectoryTree).CS}"
-                                         value-ref="pnfs-stub"/>
-                              </map>
-                          </constructor-arg>
                       </bean>
                   </property>
               </bean>

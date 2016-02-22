@@ -1,0 +1,40 @@
+/**
+ * A comment describing this element...
+ * @group my-element-set
+ * @element context-menu
+ * @demo demo/index.html
+ */
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../../bower_components/paper-menu/paper-menu.html">
+<link rel="import" href="../../../bower_components/paper-menu-button/paper-menu-button.html">
+
+<link rel="import" href="../../../bower_components/iron-icons/iron-icons.html">
+
+ <dom-module id="context-menu">
+	<template>
+		<paper-menu class="{{className}}">
+    		<paper-item>Share</paper-item>
+    		<paper-item>Settings</paper-item>
+    		<paper-item>Help</paper-item>
+    		<paper-item>Stage</paper-item>
+    		<paper-item>Bring Online</paper-item>
+  		</paper-menu>
+		
+	</template>
+	<script>
+		Polymer({
+			is: 'context-menu',
+
+			properties: {
+				className:{
+					type: String,
+					value: 'dropdown-content',
+					notify: true,
+				},
+			},
+		});
+	</script>
+</dom-module>

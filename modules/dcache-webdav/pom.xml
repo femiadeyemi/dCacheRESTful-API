@@ -45,7 +45,7 @@
     </dependency>
       <dependency>
           <groupId>org.dcache</groupId>
-          <artifactId>dcache-webapi</artifactId>
+          <artifactId>dcache-restful-api</artifactId>
           <version>${project.version}</version>
       </dependency>
     <dependency>
@@ -101,5 +101,10 @@
       <artifactId>jackson-mapper-asl</artifactId>
       <version>1.9.7</version>
     </dependency>
+      <dependency>
+          <groupId>org.dcache</groupId>
+          <artifactId>dcache-restful-api</artifactId>
+          <version>2.15.0-SNAPSHOT</version>
+      </dependency>
   </dependencies>
 </project>

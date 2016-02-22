@@ -1,0 +1,188 @@
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../../bower_components/iron-icons/editor-icons.html">
+
+<link rel="import" href="../file-type/file-type-icon.html">
+<link rel="import" href="../context-menu/hover-context-menu.html">
+
+<dom-module id="list-row">
+	<template>
+		<style>
+			:host {
+			@apply(--layout-block);
+				/*@apply(--layout-relative);*/
+				/*@apply(--layout-fit);*/ /*remember that the parent must have a relative position*/
+				/*background-color: #fff; *//*!important;*/
+				/*color: #333;*/
+				font-size: 0.7em;
+
+			}
+			.row {
+				/*@apply(--layout-fit);*/
+			@apply(--layout-horizontal);
+				height: 40px;
+				border-bottom: 1px solid #e5e5e5; /*I'm considering putting this inside where this element is used*/
+			@apply(--layout-center);
+				text-decoration: none !important;
+			}
+			.name{
+			@apply(--layout-flex-3);
+				padding-left: 10px;
+			}
+
+			.ctime, .mtime {
+			@apply(--layout-flex);
+			}
+			.size {
+			@apply(--layout-flex);
+				text-align: right;
+
+			}
+			.size > span{
+				padding-right: 10px;
+			}
+			.fit{
+			@apply(--layout-fit);
+			}
+		</style>
+
+		<div id="row" class="row">
+			<div class="cell name">
+				<file-type-icon filetype="{{fileType}}"></file-type-icon>
+				<label id="filename" style="padding-left:5px;">{{name}}</label>
+			</div>
+			<div class="cell ctime">{{ctime}}</div>
+			<div class="cell mtime">{{mtime}}</div>
+			<div class="cell size">
+				<span>{{computedSize}}</span>
+			</div>
+			<div hidden>{{path}}</div>
+		</div>
+
+	</template>
+	<script>
+		Polymer({
+			is: 'list-row',
+
+			properties :{
+				name:{
+					type: String,
+					notify: true
+				},
+
+				fileType:{
+					type: String,
+					notify: true
+				},
+
+				ctime:{
+					type: String,
+					notify: true
+				},
+
+				mtime:{
+					type: String,
+					notify: true
+				},
+
+				size:{
+					type: String,
+					notify: true
+				},
+
+				computedSize:{
+					type: String,
+					computed:'_computeSize(fileType, size)'
+				},
+
+				path:{
+					type: String,
+					notify: true
+				},
+
+			},
+
+			//EventListeners
+			listeners: {
+				'row.mouseover': '_mouseOver',
+				'row.mouseleave': '_mouseLeave',
+				'row.dblclick': '_openFileLoc',
+				'filename.dblclick': '_rename'
+			},
+
+
+			//Functions
+			_computeSize: function(fileType, size) {
+				return (fileType == "DIR") ? "--" : size;
+			},
+
+			_openFileLoc: function() {
+				var x = this.fileType;
+				var path = this.path;
+
+				if (x == "DIR"){
+					path = path.replace(/\//g, "=");
+					var y = '/home/'+path;
+					//console.log(y);
+					page(y)
+				} else{
+					window.open(path);
+				}
+
+			},
+
+			_rename: function(e){
+				e.stopPropagation();
+				console.log("Do rename you Dir");
+				e.stopPropagation();
+			},
+
+			_mouseOver: function(e) {
+				e.stopPropagation();
+
+				var el1 = new HoverContextMenu(this.name, this.fileType, this.path);
+
+				// var el1 = document.createElement('hover-context-menu');
+
+				var checker = '<span class="style-scope list-row">'+this.computedSize+'</span>';
+
+				var hover = Polymer.dom(this.$.row).childNodes[7].innerHTML;
+
+				if (hover.toString().trim() == checker.toString()) {
+					var removeSize = Polymer.dom(this.$.row).childNodes[7].lastElementChild;
+					Polymer.dom(this.$.row).childNodes[7].removeChild(removeSize);
+
+					Polymer.dom(this.$.row).childNodes[7].appendChild(el1);
+					Polymer.dom.flush();
+					this.updateStyles();
+				}
+				e.stopPropagation();
+			},
+
+			_mouseLeave: function(e) {
+				e.stopPropagation();
+
+				var checker = '<span class="style-scope list-row">'+this.computedSize+'</span>';
+
+				var hover = Polymer.dom(this.$.row).childNodes[7].innerHTML;
+
+				if (hover.toString().trim() != checker.toString()){
+					var removeHover = Polymer.dom(this.$.row).childNodes[7].lastElementChild;
+					Polymer.dom(this.$.row).childNodes[7].removeChild(removeHover);
+
+					var span = document.createElement('span');
+					var t = document.createTextNode(this.computedSize);
+					span.appendChild(t);
+					span.classList.add("style-scope", "list-row");
+
+					Polymer.dom(this.$.row).childNodes[7].appendChild(span);
+					Polymer.dom.flush();
+					this.updateStyles();
+				}
+				e.stopPropagation();
+			},
+		});
+	</script>
+</dom-module>

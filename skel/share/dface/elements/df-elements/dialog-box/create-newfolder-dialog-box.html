@@ -1,0 +1,94 @@
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../../bower_components/iron-icon/iron-icon.html">
+
+<link rel="import" href="../../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../../bower_components/paper-input/paper-input.html">
+
+<link rel="import" href="../utils/ajax-utilities/create-folder.html">
+
+<dom-module id="create-newfolder-dialog-box">
+    <template>
+        <style>
+            :host{
+                display: block;
+                @apply(--layout-vertical);
+                min-height: 170px;
+                min-width: 350px;
+            }
+            .flex {
+                @apply(--layout-flex);
+                align-content: center;
+            }
+            .create{
+                background-color: #3284e1;
+                color: white !important;
+            }
+            paper-input [prefix]{
+                margin-right: 13px !important;
+            }
+        </style>
+        <div>
+            <h2>Create New Folder</h2>
+        </div>
+        <br>
+        <div class="flex">
+            <span>This new folder will be created inside the <b style="color: red;">{{currentDirName}}</b> directory</span>
+            <paper-input label="folder name" value="{{fileName}}" auto-validate pattern="[^/]*" error-message="Folder name can not be empty or contain forward slash!" required focused>
+                <iron-icon icon="folder" prefix></iron-icon><!--allowed-pattern="[a-zA-Z0-9_/]+"-->
+            </paper-input>
+        </div>
+        <br>
+        <div class="buttons">
+            <paper-button dialog-dismiss>Cancel</paper-button>
+            <paper-button class="create" on-tap="_create" raised>Create</paper-button>
+        </div>
+    </template>
+    <script>
+        CreateNewfolderDialogBox = Polymer({
+            is: 'create-newfolder-dialog-box',
+
+            properties: {
+                fileName: {
+                    type: String,
+                    value:"Untitled folder",
+                    notify: true
+                },
+                path: {
+                    type: String,
+                    notify: true
+                },
+                currentDirName: {
+                    type: String,
+                    notify: true
+                }
+            },
+
+            //Elememt Constructor
+            factoryImpl: function(currentDirName, path) {
+                this.path = path;
+                this.currentDirName = currentDirName;
+            },
+
+            //EventHandlers Functions
+            _create: function(){
+                //TODO: Make an ajax call by creating an element called 'create-folder'
+
+
+                if(this.fileName == "" || this.fileName == null){
+                    app.$.toast.text = 'Folder name can\'t be empty';
+                    app.$.toast.show();
+                } else{
+                    console.log(this.fileName);
+                    console.log(this.path);
+                    app.$.centralDialogBox.toggle();
+                }
+
+                new CreateFolder(this.fileName, this.path);
+
+            },
+        });
+    </script>
+</dom-module>
+

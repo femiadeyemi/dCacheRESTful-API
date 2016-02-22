@@ -1,0 +1,100 @@
+<script src="../bower_components/page/page.js"></script>
+<script>
+  window.addEventListener('WebComponentsReady', function() {
+
+    // We use Page.js for routing. This is a Micro
+    // This is a client-side router. More info: 
+    // https://visionmedia.github.io/page.js/
+
+    // Removes end / from app.baseUrl which page.base requires for production
+    if (window.location.port === '') {  // if production
+      page.base(app.baseUrl.replace(/\/$/, ''));
+    }
+
+    // Middleware
+
+
+    // Routes
+    page('*', function(ctx, next) {
+      next();
+    });
+
+    page('/', function() {
+      app.route = 'home';
+      app.params = "";
+    });
+
+    page(app.baseUrl, function() {
+      app.route = 'home';
+      app.params = "";
+    });
+
+    page('/home/:path', function(data) {
+      app.route = 'pathfinder';
+      app.params = data.params;
+    });
+
+    page('/favourite', function() {
+      app.route = 'favourite';
+      app.params = "";
+    });
+
+    page('/share', function() {
+      app.route = 'share';
+      app.params = "";
+    });
+
+    page('/history', function() {
+      app.route = 'history';
+      app.params = "";
+    });
+
+    page('/selector', function() {
+      app.route = 'selector';
+      app.params = "";
+    });
+
+    page('/upload', function() {
+      app.route = 'upload';
+      app.params = "";
+    });
+
+    page('/search', function() {
+      app.route = 'search';
+      app.params = "";
+    });
+
+    page('/manager', function() {
+      app.route = 'manager';
+      app.params = "";
+    });
+
+    page('/bin', function() {
+      app.route = 'bin';
+      app.params = "";
+    });
+
+    // page('/users/:name', function(data) {
+    //   app.route = 'user-info';
+    //   app.params = data.params;
+    // });
+
+    page('/contact', function() {
+      app.route = 'contact';
+      app.params = "";
+    });
+
+    // 404
+    page('*', function() {
+      app.$.toast.text = 'Can\'t find: ' + window.location.href  + '. Redirected you to Home Page';
+      app.$.toast.show();
+      page.redirect(app.baseUrl);
+    });
+
+    // add #! before urls
+    page({
+      hashbang: true
+    });
+
+  });
+</script>

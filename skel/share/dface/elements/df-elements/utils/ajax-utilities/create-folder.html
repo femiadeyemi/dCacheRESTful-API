@@ -1,0 +1,53 @@
+<link rel="import" href="../../../../bower_components/polymer/polymer.html">
+
+<dom-module id="create-folder">
+    <template>
+        <iron-ajax id="ajax"
+                   auto
+                   url="{{url}}"
+                   method="POST"
+                   headers='{"Content-Type":"application/json", "Accept": "application/json"}'
+                   body='{"directoryName":"{{fileName}}"}'
+                   handle-as="json" on-response="handleResponse">
+        </iron-ajax>
+    </template>
+    <script>
+        CreateFolder = Polymer({
+            is: 'create-folder',
+
+            properties: {
+                fileName: {
+                    type: String,
+                    notify: true
+                },
+                path: {
+                    type: String,
+                    notify: true
+                },
+                url: {
+                    type: String,
+                    notify: true,
+                    computed:'_computeUrl(path)'
+                },
+            },
+
+            //Elememt Constructor
+            factoryImpl: function(fileName, path) {
+                this.fileName = fileName;
+                this.path = path;
+            },
+
+            //EventHandlers Functions
+            _computeUrl: function(path){
+                return "http://localhost:2880/restapi/CREATE" + path;
+                //return ['http://localhost:2880/api/v1/LIST/createEntry', path].join('/');
+            },
+
+            handleResponse: function(e, request){
+                var x = request.xhr.response;
+                console.log(x);
+            }
+        });
+    </script>
+</dom-module>
+

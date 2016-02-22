@@ -1,0 +1,131 @@
+<link rel="import" href="../../../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../../../bower_components/iron-list/iron-list.html">
+<link rel="import" href="../../../../bower_components/iron-selector/iron-selector.html">
+
+<link rel="import" href="../../../../bower_components/paper-card/paper-card.html">
+
+
+<link rel="import" href="../../list-view/list-row.html">
+<link rel="import" href="../../empty-directory/empty-directory.html">
+
+
+<dom-module id="view-file">
+	<template>
+		<style>
+			:host {
+			@apply(--layout-fit);
+			@apply(--layout-vertical);
+				margin: 0px 30px;
+			}
+			.item{
+				text-decoration: none !important;
+				background-color: white;
+			@apply(--layout-flex);
+				cursor:pointer;
+			}
+			.item:focus, .item.selected:focus {
+				outline: -webkit-focus-ring-color auto 5px !important;
+			}
+			.item:hover, .item.selected:hover {
+				background-color: #ccc;
+			}
+			.item.selected {
+				background-color: #2196F3;
+				color: #fafafa;
+				outline: 0;
+			}
+		</style>
+		<iron-ajax id="ajax"
+				auto
+				url="{{url}}"
+				method="POST"
+				headers='{"Content-Type":"application/json", "Accept": "application/json"}'
+				body='{}'
+				handle-as="json" on-response="handleResponse"
+				last-response="{{data}}">
+		</iron-ajax>
+		<paper-material id="content" elevation="1">
+			<template is="dom-if" if="!{{empty}}">
+				<iron-list items="[[data.List]]" style="min-height:50px;" selected-items="{{selectedItems}}" selection-enabled multi-selection="{{multiSlection}}">
+					<template>
+						<div>
+							<list-row class$="[[_computedClass(selected)]]" tabindex$="[[tabIndex]]"
+									  name="{{item.fileName}}"
+									  file-type="{{item.fileType}}"
+									  ctime="{{item.creationTime}}"
+									  mtime="{{item.mtime}}"
+									  size="{{item.size}}"
+									  path="{{item.path}}">
+							</list-row>
+						</div>
+					</template>
+				</iron-list>
+			</template>
+			<template  is="dom-if" if="{{empty}}">
+				<empty-directory></empty-directory>
+			</template>
+		</paper-material>
+	</template>
+
+	<script>
+		Polymer({
+			is: "view-file",
+
+			properties: {
+				path: {
+					type: String,
+					notify: true
+				},
+				url: {
+					type: String,
+					value: "http://localhost:2880/restapi/LIST/",
+					notify: true,
+					computed:'_computeUrl(path)'
+				},
+
+				selectedItems : {
+					type: Object,
+				},
+
+				multiSlection: {
+					type: Boolean,
+					value: false,
+					notify: true
+				},
+
+				empty: {
+					type: Boolean,
+					notify: true
+				},
+
+			},
+
+			_computeUrl: function(path) {
+				if (path == null){
+					return "http://localhost:2880/restapi/LIST/"
+				} else{
+					path = path.replace(/=/g, "/");
+					return "http://localhost:2880/restapi/LIST" + path;
+				}
+			},
+
+			_computedClass: function(isSelected) {
+				var classes = 'item';
+				if (isSelected) {
+					classes += ' selected';
+				}
+				return classes;
+				this.updateStyles();
+			},
+
+			handleResponse: function(e, request) {
+				var x = request.xhr.response.List.length;
+				this.empty = x == 0;
+				e.stopPropagation();
+			},
+		});
+	</script>
+</dom-module>

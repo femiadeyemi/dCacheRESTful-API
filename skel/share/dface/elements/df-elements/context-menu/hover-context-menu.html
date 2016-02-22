@@ -1,0 +1,155 @@
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../../bower_components/paper-icon-button/paper-icon-button.html">
+
+<link rel="import" href="../../../bower_components/iron-icons/iron-icons.html">
+
+<link rel="import" href="../utils/ajax-ls/file-metadata.html">
+
+<dom-module id="hover-context-menu">
+	<template>
+		<style>
+			:host {
+				display: inline-block;
+				width: 140px;
+				margin-top: 1px;
+				margin-bottom: 1px;
+				background-color: #2196F3;
+
+			}
+			paper-icon-button{
+				color: #fff;
+				width: 30px;
+				height: 30px;
+			}
+			paper-icon-button:hover{
+    			color: #212121;
+			}
+			
+			paper-menu-button{
+				padding: 0px;
+			}
+		</style>
+		<div>
+			<paper-icon-button icon="{{icon}}" title="{{tip}}" id="open"></paper-icon-button>
+			<paper-icon-button icon="info" title="metadata" id="info"></paper-icon-button>
+			<paper-icon-button icon="delete" title="delete" id="delete"></paper-icon-button>
+			<paper-icon-button icon="favorite" title="favourite" id="favourite"></paper-icon-button>
+		</div>
+		
+	</template>
+	<script>
+		HoverContextMenu = Polymer({
+			is: 'hover-context-menu',
+
+			properties: {
+				name:{
+		          type: String,
+		          notify: true
+		        },
+
+		        fileType:{
+		          type: String,
+		          notify: true
+		        },
+
+				path: {
+					type: String,
+					notify: true,
+				},
+
+				icon:{
+					type: String,
+					notify: true,
+					computed: '_computedIcon(fileType)'
+				},
+
+				tip: {
+					type: String,
+					notify: true,
+					computed: '_computedTooltip(fileType)'
+				}
+			},
+
+			//Elememt Constructor
+			factoryImpl: function(name, fileType, path) {
+    			this.name = name;
+    			this.fileType = fileType;
+    			this.path = path;
+    			//this.configureWithBar(bar);
+  			},
+
+			//EventListeners
+			listeners: {
+				'open.tap': '_open',
+				'info.tap': '_info',
+				'delete.tap': '_delete',
+				'favourite.tap': '_favourite'
+			},
+
+			//EventHandlers
+			_open: function(e) {
+				/*
+				This functionality is the same as the one in <list-row> element.
+				TODO: Think of factoring out this function
+				TODO: and create a shared behaviour that can be use by both element.
+				*/
+		    	e.stopPropagation();
+				var x = this.fileType;
+				var path = this.path;
+
+				if (x == "DIR"){
+					path = path.replace(/\//g, "=");
+					var y = '/home/'+path;
+					page(y)
+				} else{
+					window.open(path);
+				}
+		    	e.stopPropagation();
+		    },
+
+		    _info: function(e) {
+		    	e.stopPropagation();
+
+		    	var el1 = new FileMetadata(this.name, this.path);
+		    	app.$.metadataDrawer.innerHTML = "";
+		    	app.$.metadataDrawer.appendChild(el1);
+
+				Polymer.dom.flush();
+
+		    	app.$.metadata.openDrawer();
+
+		    	e.stopPropagation();
+		    },
+
+		    _delete: function(e) {
+		    	e.stopPropagation();
+		    	console.log("delete clicked");
+		    	e.stopPropagation();
+		    },
+
+		    _favourite: function(e) {
+		    	e.stopPropagation();
+		    	console.log('move clicked');
+		    	e.stopPropagation();
+		    },
+
+			//Computed Functions
+			_computedIcon: function(fileType){
+				if (fileType == "DIR"){
+					return "visibility";
+				} else {
+					return "cloud-download";
+				}
+			},
+
+			_computedTooltip: function (fileType){
+				if (fileType == "DIR"){
+					return "open folder";
+				} else {
+					return "download file";
+				}
+			},
+		});
+	</script>
+</dom-module>

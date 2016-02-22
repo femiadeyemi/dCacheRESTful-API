@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+
+	<title>dcache face</title>
+	<meta name="description" content="dcache face">
+
+	<!-- Mobile -->
+	<meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+
+	<!-- Chrome / Android -->
+	<meta name="mobile-web-app-capable" content="yes">
+	<meta name="theme-color" content="black">
+	<link rel="icon" href="icon.png">
+
+	<!-- Safari / iOS -->
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<link rel="apple-touch-icon-precomposed" href="apple-touch-icon.png">
+
+	<!-- build:css styles/main.css -->
+	<link rel="stylesheet" href="styles/main.css">
+
+	<!-- Web Components -->
+	<script src="bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+
+	<link rel="import" href="elements/elements.html">
+</head>
+<body class="fullbleed layout vertical" unresolved>
+<template is="dom-bind" id="app">
+
+	<paper-header-panel class="flex" mode="standard" shadow id="df-main-header">
+
+		<paper-toolbar class="medium-tall">
+
+			<div class="top "> <!--add title class if necessary-->
+				<paper-icon-button icon="menu" on-tap="menuAction"></paper-icon-button>
+				dCache
+			</div>
+			<div class="bottom fit" style="height: 70px; background-color: #eee;"> <!--Tools goes in here-->
+				<div class="fit">
+					<selected-title selected="{{route}}"></selected-title>
+					<!-- <context-menu-tools type="{{}}"></context-menu-tools> -->
+				</div>
+
+				<!-- <div>
+                       <paper-icon-button icon="view-module" title="Grid view" style="color:#616161;"></paper-icon-button>
+                   </div> --><!--icons:view-list-->
+			</div>
+		</paper-toolbar>
+
+		<div class="fit">
+			<paper-drawer-panel drawer-width="60px" id="dfDrawerPanel">
+				<div class="horizontal layout" drawer>
+					<div style="overflow-y:scroll;">
+						<paper-menu attr-for-selected="data-route" id="df-page-navigator" selected="[[route]]"><!--center for the menu-->
+							<a data-route="home" href$="{{baseUrl}}">
+								<paper-fab icon="device:storage" title="storage home" class="blue" mini></paper-fab>
+							</a>
+
+							<a data-route="fav" href$="{{baseUrl}}favourite">
+								<paper-fab icon="favorite" title="favourite" mini></paper-fab>
+							</a>
+
+							<a data-route="share" href$="{{baseUrl}}share">
+								<paper-fab icon="folder-shared" title="shared" class="teal" mini></paper-fab>
+							</a>
+
+							<a data-route="history" href$="{{baseUrl}}history">
+								<paper-fab icon="history" title="recents activities" class="orange" mini></paper-fab>
+							</a>
+
+							<a data-route="selector" href$="{{baseUrl}}selector">
+								<paper-fab icon="select-all" title="selector" class="purple" mini></paper-fab>
+							</a>
+
+							<a data-route="upload" href$="{{baseUrl}}upload">
+								<paper-fab icon="cloud-upload" title="upload" class="brown" mini></paper-fab>
+							</a>
+
+							<a data-route="search" href$="{{baseUrl}}search">
+								<paper-fab icon="search" title="search" class="red" mini></paper-fab>
+							</a>
+
+							<a data-route="manager" href$="{{baseUrl}}manager">
+								<paper-fab icon="settings" title="manager" class="indigo" mini></paper-fab>
+							</a>
+
+							<a data-route="bin" href$="{{baseUrl}}bin">
+								<paper-fab icon="delete" title="bin" class="green" mini></paper-fab>
+							</a>
+						</paper-menu>
+					</div>
+				</div>
+
+				<div main>
+					<paper-drawer-panel id="metadata" responsive-width="300000px" right-drawer disable-swipe><!--  -->
+						<paper-header-panel id="metadataDrawer" drawer>
+							<paper-scroll-header-panel class="flex">
+								<paper-toolbar style="background:#fafafa; color:#333;">
+									<span>Opps!</span>
+								</paper-toolbar>
+								<div class="content">
+									You are not suppose to see this :(-
+								</div>
+							</paper-scroll-header-panel>
+						</paper-header-panel>
+
+						<div main>
+							<iron-pages attr-for-selected="data-route" selected="{{route}}">
+								<section data-route="home" class="fit" style="background-color:#ECECEC;"><!-- style="height:1000px" -->
+									<paper-header-panel mode="seamed" class="flex">
+										<paper-toolbar id="list-table-header">
+											<div>table header</div>
+										</paper-toolbar>
+										<div class="fit"> <!-- style="height:3000px" -->
+											<view-file id="homeDir"></view-file>
+										</div>
+									</paper-header-panel>
+								</section>
+
+
+								<section data-route="pathfinder" class="fit" style="background-color:#ECECEC;">
+									<paper-header-panel mode="seamed" class="flex">
+										<paper-toolbar id="list-table-header">
+											<div>table</div>
+										</paper-toolbar>
+										<div class="fit">
+											<view-file path$="{{params.path}}"></view-file>
+										</div>
+									</paper-header-panel>
+								</section>
+
+
+								<section data-route="favourite" class="fit">
+								</section>
+
+								<section data-route="share" class="fit">
+								</section>
+
+								<section data-route="history" class="fit">
+								</section>
+
+								<section data-route="selector" class="fit">
+								</section>
+
+								<section data-route="upload" class="fit">
+
+									<div class="horizontal center-justified layout"><!--  -->
+										<div id="uploadContainer"></div>
+										<!-- <paper-material elevation="1">
+                                        </paper-material> -->
+									</div>
+
+								</section>
+
+								<section data-route="search" class="fit">
+								</section>
+
+
+								<section data-route="manager" class="fit">
+								</section>
+
+
+								<section data-route="bin" class="fit">
+								</section>
+							</iron-pages>
+						</div>
+					</paper-drawer-panel>
+
+				</div>
+			</paper-drawer-panel>
+		</div>
+	</paper-header-panel>
+
+	<!-- HERE IS A CENTRAL DIALOG BOX-->
+	<central-dialog-box id="centralDialogBox" modal role="alertdialog">
+		<h2>Alert</h2>
+		<p>Discard draft?</p>
+		<div class="buttons">
+			<paper-button>More details</paper-button>
+			<paper-button dialog-dismiss>Cancel</paper-button>
+			<paper-button dialog-confirm autofocus>Discard</paper-button>
+		</div>
+	</central-dialog-box>
+
+	<paper-toast id="toast">
+		<span class="toast-hide-button" role="button" tabindex="0" onclick="app.$.toast.hide()">Ok</span>
+	</paper-toast>
+</template>
+
+<script src="scripts/df.js"></script>
+</body>
+</html>

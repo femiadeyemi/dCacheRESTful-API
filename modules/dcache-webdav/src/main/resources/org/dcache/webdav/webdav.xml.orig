@@ -225,7 +225,7 @@
                                                       <property name="properties">
                                                           <map>
                                                               <entry key="jersey.config.server.provider.packages"
-                                                                     value="org.dcache.webapi"/>
+                                                                     value="org.dcache.restful"/>
                                                               <entry key="jersey.config.server.provider.classnames"
                                                                      value="org.glassfish.jersey.jackson.JacksonFeature"/>
                                                           </map>

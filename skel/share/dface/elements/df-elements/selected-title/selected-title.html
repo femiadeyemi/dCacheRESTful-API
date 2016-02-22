@@ -1,0 +1,218 @@
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout.html">
+
+<link rel="import" href="../../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../../bower_components/paper-toggle-button/paper-toggle-button.html">
+<link rel="import" href="../../../bower_components/paper-tooltip/paper-tooltip.html">
+
+<link rel="import" href="../utils/ajax-ls/file-metadata.html">
+<link rel="import" href="../dialog-box/create-newfolder-dialog-box.html">
+
+<dom-module id="selected-title">
+	<template>
+		<style>
+			:host{
+				@apply(--layout-block);
+				color: #333;
+			}
+			.row{
+				@apply(--layout-horizontal);
+				@apply(--layout-center);
+			}
+			.flex{
+				@apply(--layout-flex);
+			}
+			.flex2{
+				@apply(--layout-flex-2);
+			}
+
+			.flex3{
+				@apply(--layout-flex-3);
+			}
+
+			.standardTools{
+				@apply(--layout-horizontal);
+				@apply(--layout-end-justified);
+			}
+
+			.standardTools > paper-toggle-button {
+				display:inline-flex; 
+				height:40px;
+				--paper-toggle-button-checked-bar-color: red;
+				--paper-toggle-button-checked-button-color:  red;
+              	--paper-toggle-button-checked-ink-color: red;
+			}
+			.standardTools > div{
+				display:inline-flex;
+			}
+			paper-tooltip{
+				--paper-tooltip-background:green;
+			}
+			  
+			
+		</style>
+		<template is="dom-if" if="{{isHome}}">
+			<div class="row fit">
+				<div class="path flex2">
+					A
+				</div>
+				<div class="contexMenu flex3">
+					B
+				</div>
+				<div class="standardTools flex2">
+					<div>
+						<paper-toggle-button style="" id="multiSelection" on-tap="_multiSelection"></paper-toggle-button>
+						<paper-tooltip>switch on or off multiple selection of files</paper-tooltip>
+					</div>
+
+					<div>
+						<paper-icon-button icon="create-new-folder" style="color: #e13258;" on-tap="_newFolder"></paper-icon-button>
+						<paper-tooltip>create a new folder inside this directory</paper-tooltip>
+					</div>
+
+					<div>
+						<paper-icon-button icon="cloud-upload"></paper-icon-button>
+						<paper-tooltip>upload file into this directory</paper-tooltip>
+					</div>
+
+					<div>
+						<paper-icon-button icon="{{icon}}" on-tap="_view" title=""></paper-icon-button>
+						<paper-tooltip>change view</paper-tooltip>
+					</div>
+					
+					<div>
+						<paper-icon-button icon="info" on-tap="_metadataInfo"></paper-icon-button>
+						<paper-tooltip>get a metadata of a selected file</paper-tooltip>
+					</div>
+					
+					<div>
+						<paper-icon-button icon="settings"></paper-icon-button>
+						<paper-tooltip>settings</paper-tooltip>
+					</div>
+					
+				</div>
+			</div>
+		</template>
+		<template is="dom-if" if="{{isFav}}">
+			<div class="row fit">
+				Favourites Stuff
+			</div>
+		</template>
+	</template>
+	<script>
+		Polymer({
+			is: 'selected-title',
+
+			properties: {
+				selected: {
+					type: String,
+					notify: true,
+				},
+				isHome: {
+		        	type: Boolean,
+					value: true,
+		        	computed: '_isHome(selected)' 
+		        },
+		        isFav: {
+		        	type: Boolean,
+		        	notify: true,
+		        	computed: '_isFav(selected)' 
+		        },
+		        icon: {
+					type: String,
+					value: "apps",
+					notify: true,
+				},
+			},
+
+			//computed functions
+			_isHome: function (selected) {
+				return !!(selected == "home" || selected == "pathfinder" );
+			},
+			_isFav: function (selected) {
+				return (selected == "favourite");
+			},
+
+			//EventHandlers
+			_metadataInfo: function(e){
+				e.stopPropagation();
+
+				var name;
+				var path = app.params.path;
+				var el1;
+				var x = this.selected;
+
+				app.$.metadataDrawer.innerHTML = "";
+
+				if (x == "home"){
+					app.$.metadataDrawer.innerHTML = "You are in your home dir";
+				} else if (x == "pathfinder"){
+					path = path.replace(/=/g, "/");
+					var n = path.lastIndexOf("/");
+					name = path.slice(n+1);
+					//var parentPath = "";
+					el1 = new FileMetadata(name, path);
+					app.$.metadataDrawer.appendChild(el1);
+				}
+
+				Polymer.dom.flush();
+
+				//console.log(name);
+				//console.log(app.params.path);
+				app.$.metadata.togglePanel();
+				e.stopPropagation();
+			},
+
+			_multiSelection: function(e){
+				e.stopPropagation();
+				var checked = Polymer.dom(this.root).querySelector("#multiSelection").checked;
+				if (checked){
+					app.$.homeDir.multiSlection = true;
+				} else {
+					app.$.homeDir.multiSlection = false;
+				}
+				e.stopPropagation();
+			},
+
+			_view: function(e) {
+				e. stopPropagation();
+				var icon = this.icon;
+				if (icon == "apps"){
+					this.icon="list";
+				} else { 
+					this.icon="apps";
+				}
+				e.stopPropagation();
+			},
+
+			_newFolder: function(e){
+				var path = app.params.path;
+				var currentDirName;
+				var x = this.selected;
+
+				app.$.centralDialogBox.innerHTML = "";
+				if (x == "home"){
+					path = ""
+					currentDirName ="HOME"
+				} else if(x == "pathfinder"){
+					path = path.replace(/=/g, "/");
+					var n = path.lastIndexOf("/");
+					currentDirName = path.slice(n+1);
+					console.log(path);
+				} else{
+					console.log("Error");
+					return;
+				}
+
+				var el2 = new CreateNewfolderDialogBox(currentDirName, path);
+				app.$.centralDialogBox.appendChild(el2);
+				Polymer.dom.flush();
+				this.updateStyles();
+
+				app.$.centralDialogBox.toggle();
+			},
+			
+		});
+	</script>
+</dom-module>

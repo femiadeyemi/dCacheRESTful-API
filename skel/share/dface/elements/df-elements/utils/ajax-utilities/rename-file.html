@@ -1,0 +1,54 @@
+<link rel="import" href="../../../../bower_components/polymer/polymer.html">
+
+<dom-module id="rename-file">
+    <template>
+        <iron-ajax id="ajax"
+                   auto
+                   url="{{url}}"
+                   method="POST"
+                   headers='{"Content-Type":"application/json", "Accept": "application/json"}'
+                   body='{"name":"{{fileName}}"}'
+                   handle-as="json" on-response="handleResponse">
+        </iron-ajax>
+    </template>
+    <script>
+        RenameFile = Polymer({
+            is: 'rename-file',
+
+            properties: {
+                fileName: {
+                    type: String,
+                    notify: true
+                },
+                path: {
+                    type: String,
+                    notify: true
+                },
+                url: {
+                    type: String,
+                    notify: true,
+                    computed:'_computeUrl(path)'
+                },
+            },
+
+            //Elememt Constructor
+            factoryImpl: function(fileName, path) {
+                this.fileName = fileName;
+                this.path = path;
+            },
+
+            //EventHandlers Functions
+            _computeUrl: function(path){
+                return "http://localhost:2880/restapi/RENAME" + path;
+                //return ['http://localhost:2880/api/v1/LIST/createEntry', path].join('/');
+            },
+
+            handleResponse: function(e, request){
+                var x = request.xhr.response;
+                console.log(x);
+            }
+        });
+    </script>
+</dom-module>
+<!--Work In Progress: I Have not done any work here, all I did was to copy <create-folder> element -->
+

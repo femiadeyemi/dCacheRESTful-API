@@ -1,0 +1,157 @@
+<!--
+A comment describing this element.
+
+Example:
+
+    <my-elem></my-elem>
+
+Example:
+
+    <my-elem>
+      <h2>Hello my-elem</h2>
+    </my-elem>
+
+@demo demo/index.html
+-->
+<link rel="import" href="../../../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../../../bower_components/iron-icons/iron-icons.html">
+
+
+<link rel="import" href="../../../../bower_components/paper-scroll-header-panel/paper-scroll-header-panel.html">
+<link rel="import" href="../../../../bower_components/paper-toolbar/paper-toolbar.html">
+<link rel="import" href="../../../../bower_components/paper-icon-button/paper-icon-button.html">
+
+
+<dom-module id="file-metadata">
+	<style>
+		:host {
+			height: 100%;
+			margin: 0;
+		}
+
+		.flex {
+			@apply(--layout-flex);
+		}
+
+		.spacer {
+			margin-left: 10px !important;
+		}
+
+		paper-scroll-header-panel {
+			height: 100%;
+		}
+
+		paper-toolbar {
+			background: #fafafa;
+			color: #333;
+		}
+		.content{
+			padding: 2px 7px;
+		}
+	</style>
+	<template>
+		<paper-scroll-header-panel class="flex" fixed>
+
+			<paper-toolbar>
+				<!-- <iron-icon icon="icons:folder" class="dir"></iron-icon>  -->
+				<div class="spacer title">{{fileName}}</div>
+				<paper-icon-button icon="close" title="close" id="closeFileMetadataPanel"></paper-icon-button>
+			</paper-toolbar>
+			<hr>
+			<div class="content">
+				<iron-ajax
+						auto
+						url="{{url}}"
+						method="POST"
+						headers='{"Content-Type":"application/json", "Accept": "application/json"}'
+						body='{"fileName":"{{fileName}}"}'
+						handle-as="json"
+						last-response="{{metadata}}">
+				</iron-ajax> <!-- headers="{{setHeader}}" body="{{reqBody}}" -->
+				<template is="dom-repeat" items="{{metadata.List}}">
+					<div>
+						{{item.fileName}}
+					</div>
+
+					<div>
+						{{item.creationTime}}
+					</div>
+
+					<div>
+						{{item.mtime}}
+					</div>
+
+					<div>
+						{{item.fileType}}
+					</div>
+
+					<div>
+						{{item.path}}
+					</div>
+				</template>
+			</div>
+		</paper-scroll-header-panel>
+	</template>
+	<script>
+		FileMetadata = Polymer({
+			is: 'file-metadata',
+
+			properties: {
+				fileName: {
+					type: String,
+					notify: true
+				},
+
+				path: {
+					type: String,
+					notify: true
+				},
+
+				url: {
+					type: String,
+					notify: true,
+					computed:'_computeUrl(path)'
+				},
+
+				// setHeader: {
+				// 	type: Object,
+				// 	notify: true,
+				// 	computed:'_computeHeader()'
+				// },
+			},
+
+			//Elememt Constructor
+			factoryImpl: function(fileName, path) {
+				this.fileName = fileName;
+				this.path = path;
+				//this.configureWithBar(bar);
+			},
+
+			//EventListner
+			listeners: {
+				'closeFileMetadataPanel.tap': '_closeFileMetadataPanel'
+			},
+
+			//Computed Functions
+			_computeUrl: function(path) {
+				parentPath = path.replace(this.fileName, "");
+				return "http://localhost:2880/restapi/LIST" + parentPath;
+			},
+
+			// _computeHeader: function() {
+			// 	return '{"Authorization":"'+[[put authentication token here]] +'"}';
+			// },
+
+			//EventHandler
+			_closeFileMetadataPanel: function(e) {
+				e.stopPropagation();
+				console.log('{"fileNames":["'+this.fileName +'"]}');
+				app.$.metadata.closeDrawer();
+				e.stopPropagation();
+			},
+		});
+	</script>
+</dom-module>
